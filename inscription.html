@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vente Rush | Inscription</title>
+    <link rel="stylesheet" href="/public/assets/bootstrap/css/bootstrap.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="/views/index.html">Vente Rush</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/views/inscription.html">Créer un compte</a>
+                <a class="nav-link" href="/views/login.html">Se connecter</a>
+                <a class="nav-link" href="/views/ads.html">Voir les annonces</a>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-5">
+        <h2>S'inscrire</h2>
+        <form id="inscription-form">
+            <div class="mb-3">
+                <label for="inscription-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="inscription-email" value="aa@ddd.few" required>
+                <small class="text-muted">Ex: exemple@example.com</small>
+                <p id="erreur-inscription-email" class="alert alert-danger" role="alert"style="display: none;"></p>
+            </div>
+            <div class="mb-3">
+                <label for="inscription-motDePasse" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="inscription-motDePasse" minlength="5" value="aa@ddd.few" required>
+                <small class="text-muted">Minimum 5 caractères</small>
+                <p id="erreur-inscription-motDePasse" class="alert alert-danger" role="alert" style="display: none;"></p>
+            </div>
+            <button type="submit" class="btn btn-primary" id="inscription-bouton">S'inscrire</button>
+        </form>
+    </main>
+    <footer>
+
+    </footer>
+    <script src="/public/assets/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
+
+    
+    <script src="/public/js/login.js" type="module"></script>
+    <script src="/public/js/main.js" type="module"></script>
+</body>
+</html>
