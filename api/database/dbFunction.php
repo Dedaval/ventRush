@@ -7,13 +7,15 @@ function createUserDb(array $data): array
     $password = password_hash($data[PASSWORD], PASSWORD_DEFAULT);
     $token = generateToken();
     $db = getDb();
-    $sql = "INSERT INTO users(email, password, token) VALUES (:email, :password, :token)";
+    $sql = "INSERT INTO utilisateurs(nom, prenom, email, mdp, token) VALUES (:nom, :prenom, :email, :mdp, :token)";
 
     $db->beginTransaction();
     try {
         $stmt = $db->prepare($sql);
+        $stmt->bindParam(':nom', $data["nom"], PDO::PARAM_STR);
+        $stmt->bindParam(':prenom', $data["prenom"], PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->bindParam(':mdp', $password, PDO::PARAM_STR);
         $stmt->bindValue(':token', $token, PDO::PARAM_STR);
         $stmt->execute();
         $db->commit();
@@ -53,13 +55,13 @@ function checkUser(array $data): array
     $db = getDb();
 
     try {
-        $stmt = $db->prepare("SELECT password FROM users WHERE email = :email");
+        $stmt = $db->prepare("SELECT mdp FROM utilisateurs WHERE email = :email");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && password_verify($password, $user['password'])) {
-            $update = $db->prepare("UPDATE users SET token = :token WHERE email = :email");
+        if ($user && password_verify($password, $user['mdp'])) {
+            $update = $db->prepare("UPDATE utilisateurs SET token = :token WHERE email = :email");
             $update->bindParam(':token', $token, PDO::PARAM_STR);
             $update->bindParam(':email', $email, PDO::PARAM_STR);
             $update->execute();
@@ -74,7 +76,7 @@ function checkUser(array $data): array
 function logoutUser(string $token): array
 {
     $db = getDb();
-    $sql = "UPDATE users SET token = NULL WHERE token = :token";
+    $sql = "UPDATE utilisateurs SET token = NULL WHERE token = :token";
     try {
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':token', $token, PDO::PARAM_STR);
@@ -109,7 +111,7 @@ function createAd(array $data): array
 
     $db = getDb();
 
-    $sql = "SELECT id FROM users WHERE token = :token";
+    $sql = "SELECT id FROM utilisateurs WHERE token = :token";
     try {
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':token', $token, PDO::PARAM_STR);
@@ -150,7 +152,7 @@ function getAllAds(string $token): array
 {
     $db = getDb();
 
-    $stmt = $db->prepare("SELECT id FROM users WHERE token = :token");
+    $stmt = $db->prepare("SELECT id FROM utilisateurs WHERE token = :token");
     $stmt->bindParam(':token', $token, PDO::PARAM_STR);
     $stmt->execute();
     $currentUser = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -192,7 +194,7 @@ function updateAd(int $adId, array $data): array
     $db = getDb();
     $token = $data[TOKEN];
 
-    $sql = "SELECT id FROM users WHERE token = :token";
+    $sql = "SELECT id FROM utilisateurs WHERE token = :token";
     $stmt = $db->prepare($sql);
     $stmt->bindParam(':token', $token, PDO::PARAM_STR);
     $stmt->execute();
@@ -243,7 +245,7 @@ function deleteAd(string $token, int $adId): array
 {
     $db = getDb();
 
-    $sql = "SELECT id FROM users WHERE token = :token";
+    $sql = "SELECT id FROM utilisateurs WHERE token = :token";
     $stmt = $db->prepare($sql);
     $stmt->bindParam(':token', $token, PDO::PARAM_STR);
     $stmt->execute();

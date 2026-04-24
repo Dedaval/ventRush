@@ -1,6 +1,6 @@
 "use strict";
 
-import { MOT_DE_PASSE_MIN_LONGUEUR, NOM_MIN_LONGUEUR, PRENOM_MIN_LONGUEUR, REGEX_VALIDER_EMAIL } from "./constants.js";
+import { MOT_DE_PASSE_MIN_LONGUEUR, NOM_MIN_LONGUEUR, PRENOM_MIN_LONGUEUR, REGEX_VALIDER_EMAIL } from "./constants2.js";
 
 //#region Validate fields
 export function validerEmail(email) {

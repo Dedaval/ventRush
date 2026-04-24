@@ -3,38 +3,38 @@
 
 
 
-import { AMOUNT, AMOUNT_MIN_VALUE, CURRENCY, EMAIL, MATCH_FIELD_FUNCTION, PASSWORD, PASSWORD_MIN_LENGTH, SERVICE_URL, SERVICE_USER, TITLE, TITLE_MIN_LENGTH, REGEX_VALIDATE_EMAIL, TOKEN, NAVIGATION, SERVICE_CONNECTION } from "./constants.js";
+import { AMOUNT, AMOUNT_MIN_VALUE, CURRENCY, EMAIL, MATCH_FIELD_FUNCTION, PASSWORD, PASSWORD_MIN_LENGTH, SERVICE_URL, SERVICE_USER, TITLE, TITLE_MIN_LENGTH, REGEX_VALIDATE_EMAIL, TOKEN, NAVIGATION, SERVICE_CONNECTION, SERVICE_AD } from "./constants.js";
 //#endregion
 
 //#region Validate fields
 export function validateEmail(email) {
-	if (!email)
-		return false;
+    if (!email)
+        return false;
     return REGEX_VALIDATE_EMAIL.test(email.toLowerCase());
 }
 
-export function validatePassword(password){
+export function validatePassword(password) {
     if (!password)
         return false;
     return password.length >= PASSWORD_MIN_LENGTH;
 }
 
-export function validateTitle(title){
+export function validateTitle(title) {
     if (!title)
         return false;
     return title.length >= TITLE_MIN_LENGTH;
 }
 
-export function validateDescription(description){
+export function validateDescription(description) {
     return true
 }
 
-export function validateAmount(amount){
+export function validateAmount(amount) {
     if (!amount)
         return false;
-    return amount.length >= AMOUNT_MIN_VALUE;
+    return amount > AMOUNT_MIN_VALUE;
 }
-export function validateCurrency(currency){
+export function validateCurrency(currency) {
     if (!currency)
         return false;
     currency = currency.toLowerCase();
@@ -58,8 +58,9 @@ export function checkFields(fields, fieldsError) {
                 errorField.textContent = `The field ${key} is invalid`;
                 error = true;
             }
-            
+
         } else {
+
             if (errorField) {
                 errorField.style.display = "none";
                 errorField.textContent = '';
@@ -69,67 +70,75 @@ export function checkFields(fields, fieldsError) {
 
     return !error;
 }
-export function resetMessage(...fields){
-    for (const field of fields){
+export function resetMessage(...fields) {
+    for (const field of fields) {
         if (field.style !== undefined)
-        field.style.display = "none";
+            field.style.display = "none";
         field.textContent = null;
     }
 }
 
 
-export async function sendData(service, method, data = null){
+export async function sendData(service, method, data = null, param = null) {
 
     let dataJson = null;
-    if (data){
+    if (data) {
         dataJson = JSON.stringify(data);
     }
     const token = getToken();
-    try{
+    try {
         const properties = {
             method: method,
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
             },
         }
 
-        if (token){
+        if (token) {
             properties.headers["Authorization"] = `Token ${token}`;
         }
-        if (dataJson){
+        if (dataJson) {
             properties.body = dataJson;
         }
-        
-        const response = await fetch(SERVICE_URL + service, properties);
+        let url = `${SERVICE_URL}${service}`;
+        if (param !== null) {
+            url = `${url}/${param}`;
+        }
+        const response = await fetch(url, properties);
         return await (response);
     }
-    catch(error){
+    catch (error) {
         console.error("Error fetch," + error);
     }
 }
-export async function toJson(response){
-    try{
+export async function toJson(response) {
+    try {
         return await response.json()
     }
-    catch(error){
+    catch (error) {
         console.error("Error JSON," + error);
     }
 }
 
-export function getToken(){
+export function getToken() {
     return localStorage.getItem(TOKEN);
 }
 
-export function isLogin(){
+export function isLogin() {
     const token = getToken();
     return token != null;
 }
+export function navigation(container) {
+    container.innerHTML = '';
+    createNavigation(container, NAVIGATION, isLogin());
 
-export function createNavigation(container, navigation, needLogin){
+}
+export function createNavigation(container, navigation, needLogin) {
     for (const object of navigation) {
-        if (object.needLogin == needLogin || object.accessAnywhere){
+        if (object.needLogin == needLogin || object.accessAnywhere) {
             const a = document.createElement('a');
             a.className = 'nav-link';
+            a.id = object.id;
 
             if (object.href !== null)
                 a.href = object.href;
@@ -138,20 +147,47 @@ export function createNavigation(container, navigation, needLogin){
             a.onclick = object.onclick || null;
 
             container.appendChild(a);
-        }       
+        }
     }
 }
-export async function logout(){
-    const result = await sendData(SERVICE_CONNECTION, "DELETE" );
+export async function logout() {
+    const result = await sendData(SERVICE_CONNECTION, "DELETE");
     if (!result.ok) {
-        const message = await toJson(result);    
+        const message = await toJson(result);
         console.log(message);
         return;
     }
     localStorage.removeItem(TOKEN);
-    window.location.href = 'index.html';       
+    window.location.href = 'index.html';
 }
 export function displayMessageErrorApi(messageError) {
-    const  formatted = messageError.replace(/\./g, " ");
+    const formatted = messageError.replace(/\./g, " ");
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
+
+export async function supprimerAnnonce(id) {
+    const confirmed = confirm("Voulez-vous vraiment supprimer cette annonce ?");
+
+    if (confirmed) {
+        const result = await sendData(SERVICE_AD, "DELETE", null, id);
+        if (result.ok) {
+            console.log("annonces supprimer")
+            window.location.href = 'ads.html';
+            return
+        }
+        const json = await toJson(result);
+        console.log(json)
+        console.error("Erreur lors de la suppression")
+    }
+}
+export async function getAd(id){
+    const result = await sendData(SERVICE_AD, "GET", null, id);
+    const json = await toJson(result);
+    if (result.ok) {
+            return json
+        }
+        
+        console.log(json)
+        console.error("Erreur pour obtenir l'annonce")
+
 }

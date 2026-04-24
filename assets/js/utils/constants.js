@@ -1,45 +1,50 @@
 "use strict";
 
-import { validateAmount, validateCurrency, validateEmail, validatePassword, validateTitle, validateDescription, logout } from "./function.js";
+import { validateAmount, validateCurrency, validateEmail, validatePassword, validateTitle, validateDescription, logout } from "./function.js     ";
 
 //#region field
-export const NOM = 'nom';
-export const PRENOM = 'prenom';
 export const EMAIL = 'email';
-export const MOT_DE_PASSE = 'motDePasse';
+export const PASSWORD = 'password';
 export const TOKEN = 'token';
+export const TITLE = 'title';
+export const DESCRIPTION = 'description';
+export const PRICE = 'price';
+export const AMOUNT = 'amount';
+export const CURRENCY = 'currency';
 //#endregion
 
 //#region state
 export const SUCCESS = 'success';
-export const ERREUR = 'erreur';
+export const ERROR = 'error';
 //#endregion
 
 //#region validation
-export const REGEX_VALIDER_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-export const MOT_DE_PASSE_MIN_LONGUEUR = 5;
-export const NOM_MIN_LONGUEUR = 2;
-export const PRENOM_MIN_LONGUEUR = 2;
+export const REGEX_VALIDATE_EMAIL = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+export const PASSWORD_MIN_LENGTH = 5;
+export const TITLE_MIN_LENGTH = 2;
+export const AMOUNT_MIN_VALUE = 0;
 export const MATCH_FIELD_FUNCTION = [
-    { [EMAIL]: validerEmail },
-    { [MOT_DE_PASSE]: validerMotDePasse },
-    { [PRENOM]: validerPrenom },
-    { [NOM]: validerNom },
+    { [EMAIL]: validateEmail },
+    { [PASSWORD]: validatePassword },
+    { [TITLE]: validateTitle },
+    { [DESCRIPTION]: validateDescription },
+    { [AMOUNT]: validateAmount },
+    { [CURRENCY]: validateCurrency }
 ];
 //#endregion
 
 //#region Server
-export const SERVICE_URL = "https://devmob.ictge.ch/~kramer/other/api/"
-export const SERVICE_UTILISATEUR = "user";
-export const SERVICE_CONNEXION = "connection";
-export const SERVICE_EVENEMENT = "ad";
-export const SERVICE_EVENEMENTS = "ads";
+export const SERVICE_URL = "http://localhost/ventRush/api/"
+export const SERVICE_USER = "user.php";
+export const SERVICE_CONNECTION = "connection.php";
+export const SERVICE_AD = "ad";
+export const SERVICE_ADS = "ads";
 
 export const NAVIGATION = [
-    { name: 'Créer un compte', href: 'register.html', needLogin: false },
-    { name: 'Se connecter', href: 'login.html', needLogin: false },
-    { name: 'Se déconnecter', href: null, needLogin: true, onclick: logout },
-    { name: 'Voir les événement', href: 'ads.html', needLogin: false, accessAnywhere: true },
-    { name: 'Supprimer une événement', href: 'create_ad.html', needLogin: true },
+    { name: 'Créer un compte', href: 'register.html', needLogin: false, id: "btnSignIn" },
+    { name: 'Se connecter', href: 'login.html', needLogin: false, id: "btnLogin" },
+    { name: 'Se déconnecter', href: null, needLogin: true, onclick: logout, id: "btnLogout" },
+    { name: 'Voir les événements', href: 'ads.html', needLogin: false, accessAnywhere: true, id: "btnAd" },
+    { name: 'Créer une événements', href: 'create_ad.html', needLogin: true, id: "btnCreateAd" },
     
 ];

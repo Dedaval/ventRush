@@ -18,6 +18,9 @@
 --
 -- Table structure for table `evenement`
 --
+DROP DATABASE IF EXISTS `VenteRush`;
+CREATE DATABASE `VenteRush`;
+use VenteRush;
 
 DROP TABLE IF EXISTS `evenement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -79,6 +82,7 @@ CREATE TABLE `utilisateurs` (
   `prenom` varchar(100) NOT NULL,
   `email` varchar(150) NOT NULL,
   `mdp` varchar(255) NOT NULL,
+  `token` varchar(255),
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

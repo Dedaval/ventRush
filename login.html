@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petites Annonces - Connexion</title>
+    <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="index.html">Vente Rush</a>
+            <div class="navbar-nav">
+
+            </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Se connecter</h2>
+        <form id="login-form">
+            <div class="mb-3">
+                <label for="login-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="login-email" required>
+                <p id="error-login-email" class="alert alert-danger" role="alert" style="display: none;"style="display: none;"></p>
+            </div>
+            <div class="mb-3">
+                <label for="login-password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="login-password" required>
+                <p id="error-login-password" class="alert alert-danger" role="alert"style="display: none;"></p>
+            </div>
+            <p id="error-login" class="alert alert-danger" role="alert"style="display: none;"></p>
+            <button type="submit" class="btn btn-primary" id="login-button">Se connecter</button>
+        </form>
+    </div>
+
+    <script src="assets/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script  src="assets/js/login.js" type="module"></script>
+    <script src="assets/js/main.js" type="module"></script>
+</body>
+</html>
+
