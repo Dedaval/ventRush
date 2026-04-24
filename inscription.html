@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vente Rush | Inscription</title>
     <link rel="stylesheet" href="assets/lib/bootstrap/css/bootstrap.min.css">
+    <script src="assets/js/main.js" type="module" defer></script>
     <script src="assets/js/component/Navigation.js" type="module" defer></script>
 </head>
 <body>
@@ -21,25 +22,25 @@
         <form id="inscription-form">
             <div class="mb-3">
                 <label for="inscription-nom" class="form-label">Nom</label>
-                <input type="text" class="form-control" id="inscription-nom" value="Nom" required>
+                <input type="text" class="form-control" id="inscription-nom" required>
                 <small class="text-muted">Minimum 3 caractères</small>
                 <p id="erreur-inscription-nom" class="alert alert-danger" role="alert"style="display: none;"></p>
             </div>
             <div class="mb-3">
                 <label for="inscription-prenom" class="form-label">Prénom</label>
-                <input type="text" class="form-control" id="inscription-prenom" value="Prénom" required>
+                <input type="text" class="form-control" id="inscription-prenom" required>
                 <small class="text-muted">Minimum 3 caractères</small>
                 <p id="erreur-inscription-prenom" class="alert alert-danger" role="alert"style="display: none;"></p>
             </div>
             <div class="mb-3">
                 <label for="inscription-email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="inscription-email" value="aa@ddd.few" required>
+                <input type="email" class="form-control" id="inscription-email" required>
                 <small class="text-muted">Ex: exemple@example.com</small>
                 <p id="erreur-inscription-email" class="alert alert-danger" role="alert"style="display: none;"></p>
             </div>
             <div class="mb-3">
                 <label for="inscription-motDePasse" class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" id="inscription-motDePasse" minlength="5" value="aa@ddd.few" required>
+                <input type="password" class="form-control" id="inscription-motDePasse" minlength="5" required>
                 <small class="text-muted">Minimum 5 caractères</small>
                 <p id="erreur-inscription-motDePasse" class="alert alert-danger" role="alert" style="display: none;"></p>
             </div>
