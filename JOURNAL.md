@@ -19,5 +19,6 @@
 # 08.05.2026
 
 * Fait la creation d'un evenement
-* J'avais oublie de faire avec un nbMax donc j'ai du modifier
+* Nous avons oublie de faire avec un nbMax donc j'ai du modifier
 * On a commencer aussi l'inscription a un evenement mais pas encore pu tester car il fallait d'abord creer l'evenement
+* On a eu des problemes avec les pull avec github
