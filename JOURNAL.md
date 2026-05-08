@@ -15,3 +15,9 @@
 * Faire la page de connexion avec la logique.
 * Commencement de la création d'événements
 * Bryan n'est pas la. Donc on n'a pas pu faire la création d'événements et on prend un peu de retard
+
+# 08.05.2026
+
+* Fait la creation d'un evenement
+* J'avais oublie de faire avec un nbMax donc j'ai du modifier
+* On a commencer aussi l'inscription a un evenement mais pas encore pu tester car il fallait d'abord creer l'evenement

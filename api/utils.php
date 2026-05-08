@@ -22,6 +22,8 @@ define('PRICE', 'price');
 define('ID_AD', 'idAd');
 define('EDITABLE', 'editable');
 define('PARAMETER', 'parameter');
+define('PARTICIPANT', 'participant');
+define('MAX_USERS', 'maxUsers');
 function emailValidate(string $email): bool
 {
     return filter_var($email, FILTER_VALIDATE_EMAIL);

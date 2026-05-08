@@ -167,6 +167,7 @@ function getAllAds(string $token): array
 {
     $db = getDb();
 
+    // Vérification du token
     $stmt = $db->prepare("SELECT id FROM utilisateurs WHERE token = :token");
     $stmt->bindParam(':token', $token, PDO::PARAM_STR);
     $stmt->execute();
@@ -183,27 +184,41 @@ function getAllAds(string $token): array
 
     $currentUserId = (int) $currentUser['id'];
 
-    $sql = "SELECT id, user_id, title, description, amount, currency FROM ads";
+    // Récupération des événements
+    $sql = "SELECT id, nom, date, description, nbMaxUtilisateurs FROM evenement";
     $stmt = $db->prepare($sql);
     $stmt->execute();
-    $ads = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $result = [];
-    foreach ($ads as $ad) {
+
+    foreach ($events as $event) {
+
+        // Vérifier si l'utilisateur participe à cet événement
+        $stmtCheck = $db->prepare("
+            SELECT 1 FROM evenement_utilisateurs 
+            WHERE utilisateurs_id = :uid AND evenements_id = :eid
+        ");
+        $stmtCheck->bindParam(':uid', $currentUserId, PDO::PARAM_INT);
+        $stmtCheck->bindParam(':eid', $event['id'], PDO::PARAM_INT);
+        $stmtCheck->execute();
+
+        $isParticipant = $stmtCheck->fetch() ? true : false;
+
         $result[] = [
-            ID_AD => (int) $ad['id'],
-            EDITABLE => ((int) $ad['user_id'] === $currentUserId),
-            TITLE => $ad['title'],
-            DESCRIPTION => $ad['description'],
-            PRICE => [
-                AMOUNT => (int) $ad['amount'],
-                CURRENCY => $ad['currency']
-            ]
+            ID_AD => (int) $event['id'],
+            EDITABLE => false,
+            PARTICIPANT => $isParticipant,
+            TITLE => $event['nom'],
+            DATE => $event['date'],
+            DESCRIPTION => $event['description'],
+            MAX_USERS => (int) $event['nbMaxUtilisateurs']
         ];
     }
 
     return [CODE => 200, AD => $result];
 }
+
 function updateAd(int $adId, array $data): array
 {
     $db = getDb();
