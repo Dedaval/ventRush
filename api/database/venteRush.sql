@@ -44,6 +44,7 @@ CREATE TABLE
     `nom` varchar(100) NOT NULL,
     `date` date NOT NULL,
     `description` varchar(255) NOT NULL,
+    `nbMaxUtilisateurs` int (11) NOT NULL,
     PRIMARY KEY (`id`)
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 

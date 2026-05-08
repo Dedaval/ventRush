@@ -106,6 +106,7 @@ function createAd(array $data): array
     $token = $data['token'];
     $nom = $data['title'];
     $description = $data['description'] ?? null;
+    $nbMaxUtilisateurs = $data['nbMaxUtilisateurs'] ?? null;
     $date = $data['date'];
 
     $db = getDb();
@@ -128,12 +129,13 @@ function createAd(array $data): array
 
         $user_id = $user['id'];
 
-        $sql = "INSERT INTO evenement(nom, date, description) 
-                VALUES (:nom, :date, :description)";
+        $sql = "INSERT INTO evenement(nom, date, description, nbMaxUtilisateurs) 
+                VALUES (:nom, :date, :description, :nbMaxUtilisateurs)";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
         $stmt->bindParam(':date', $date, PDO::PARAM_STR);
         $stmt->bindParam(':description', $description, PDO::PARAM_STR);
+        $stmt->bindParam(':nbMaxUtilisateurs', $nbMaxUtilisateurs, PDO::PARAM_STR);
         $stmt->execute();
 
         $event_id = intval($db->lastInsertId());

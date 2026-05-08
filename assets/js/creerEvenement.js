@@ -60,7 +60,7 @@ btnSubmit?.addEventListener("click", async (e) => {
         [TITLE]: fields[TITLE],
         [DESCRIPTION]: fields[DESCRIPTION],
         [DATE]: fields[DATE],
-        [NB_MAX_PARTIPANT]: fields[NB_MAX_PARTIPANT],
+        [NB_MAX_PARTIPANT]: parseFloat(fields[NB_MAX_PARTIPANT]),
 
     };
     let result;
@@ -76,21 +76,13 @@ btnSubmit?.addEventListener("click", async (e) => {
     }
     if (Array.isArray(json)) {
         for (const element of json) {
-            if (element.field === titre) {
+            if (element.field === TITLE) {
                 nomError.style.display = "block";
                 nomError.textContent = displayMessageErrorApi(element.message);
             }
             if (element.field === DESCRIPTION) {
                 descriptionError.style.display = "block";
                 descriptionError.textContent = displayMessageErrorApi(element.message);
-            }
-            if (element.field === AMOUNT) {
-                dateError.style.display = "block";
-                dateError.textContent = displayMessageErrorApi(element.message);
-            }
-            if (element.field === CURRENCY) {
-                adCurrencyError.style.display = "block";
-                adCurrencyError.textContent = displayMessageErrorApi(element.message);
             }
         }
     } else if (json.message) {
