@@ -5,6 +5,7 @@ define('TOKEN', 'token');
 define('TITLE', 'title');
 define('DESCRIPTION', 'description');
 define('AMOUNT', 'amount');
+define('DATE', 'date');
 define('CURRENCY', 'currency');
 define('ACCEPT_CURRENCY', ['CHF', 'EUR', 'USD']);
 define('MIN_CHARACTERS_PASSWORD', 5);

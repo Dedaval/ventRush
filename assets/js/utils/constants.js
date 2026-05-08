@@ -1,6 +1,6 @@
 "use strict";
 
-import { validateAmount, validateCurrency, validateEmail, validatePassword, validateTitle, validateDescription, logout } from "./function.js     ";
+import { validateAmount, validateDate,validateCurrency, validateEmail, validatePassword, validateTitle, validateDescription, logout } from "./function.js     ";
 
 //#region field
 export const EMAIL = 'email';
@@ -11,6 +11,7 @@ export const DESCRIPTION = 'description';
 export const PRICE = 'price';
 export const AMOUNT = 'amount';
 export const CURRENCY = 'currency';
+export const DATE = 'date';
 //#endregion
 
 //#region state
@@ -29,7 +30,8 @@ export const MATCH_FIELD_FUNCTION = [
     { [TITLE]: validateTitle },
     { [DESCRIPTION]: validateDescription },
     { [AMOUNT]: validateAmount },
-    { [CURRENCY]: validateCurrency }
+    { [CURRENCY]: validateCurrency },
+    { [DATE]: validateDate},
 ];
 //#endregion
 
@@ -37,14 +39,14 @@ export const MATCH_FIELD_FUNCTION = [
 export const SERVICE_URL = "http://localhost/ventRush/api/"
 export const SERVICE_USER = "user.php";
 export const SERVICE_CONNECTION = "connection.php";
-export const SERVICE_AD = "ad";
-export const SERVICE_ADS = "ads";
+export const SERVICE_EVENEMENT = "evenement.php";
+export const SERVICE_EVENEMENTS = "evenements.php";
 
 export const NAVIGATION = [
-    { name: 'Créer un compte', href: 'register.html', needLogin: false, id: "btnSignIn" },
+    { name: 'Créer un compte', href: 'inscription.html', needLogin: false, id: "btnSignIn" },
     { name: 'Se connecter', href: 'login.html', needLogin: false, id: "btnLogin" },
     { name: 'Se déconnecter', href: null, needLogin: true, onclick: logout, id: "btnLogout" },
     { name: 'Voir les événements', href: 'ads.html', needLogin: false, accessAnywhere: true, id: "btnAd" },
-    { name: 'Créer une événements', href: 'create_ad.html', needLogin: true, id: "btnCreateAd" },
+    { name: 'Créer un événements', href: 'creerEvenement.html', needLogin: true, id: "btnCreateAd" },
     
 ];

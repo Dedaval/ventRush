@@ -3,7 +3,7 @@
 
 
 
-import { AMOUNT, AMOUNT_MIN_VALUE, CURRENCY, EMAIL, MATCH_FIELD_FUNCTION, PASSWORD, PASSWORD_MIN_LENGTH, SERVICE_URL, SERVICE_USER, TITLE, TITLE_MIN_LENGTH, REGEX_VALIDATE_EMAIL, TOKEN, NAVIGATION, SERVICE_CONNECTION, SERVICE_AD } from "./constants.js";
+import { AMOUNT, AMOUNT_MIN_VALUE, CURRENCY, EMAIL, MATCH_FIELD_FUNCTION, PASSWORD, PASSWORD_MIN_LENGTH, SERVICE_URL, SERVICE_USER, TITLE, TITLE_MIN_LENGTH, REGEX_VALIDATE_EMAIL, TOKEN, NAVIGATION, SERVICE_CONNECTION, SERVICE_EVENEMENT } from "./constants.js";
 //#endregion
 
 //#region Validate fields
@@ -26,7 +26,9 @@ export function validateTitle(title) {
 }
 
 export function validateDescription(description) {
-    return true
+    if (!description)
+        return false;
+    return true;
 }
 
 export function validateAmount(amount) {
@@ -39,6 +41,11 @@ export function validateCurrency(currency) {
         return false;
     currency = currency.toLowerCase();
     return Object.values(Currency).includes(currency);
+}
+export function validateDate(date){
+    if (!date)
+        return false;
+    return true;
 }
 //#endregion
 
@@ -169,7 +176,7 @@ export async function supprimerAnnonce(id) {
     const confirmed = confirm("Voulez-vous vraiment supprimer cette annonce ?");
 
     if (confirmed) {
-        const result = await sendData(SERVICE_AD, "DELETE", null, id);
+        const result = await sendData(SERVICE_EVENEMENT, "DELETE", null, id);
         if (result.ok) {
             console.log("annonces supprimer")
             window.location.href = 'ads.html';
@@ -181,7 +188,7 @@ export async function supprimerAnnonce(id) {
     }
 }
 export async function getAd(id){
-    const result = await sendData(SERVICE_AD, "GET", null, id);
+    const result = await sendData(SERVICE_EVENEMENT, "GET", null, id);
     const json = await toJson(result);
     if (result.ok) {
             return json

@@ -104,19 +104,19 @@ function logoutUser(string $token): array
 function createAd(array $data): array
 {
     $token = $data['token'];
-    $title = $data['title'];
+    $nom = $data['title'];
     $description = $data['description'] ?? null;
-    $amount = $data[PRICE]['amount'];
-    $currency = $data[PRICE]['currency'];
+    $date = $data['date'];
 
     $db = getDb();
 
-    $sql = "SELECT id FROM utilisateurs WHERE token = :token";
     try {
+        $sql = "SELECT id FROM utilisateurs WHERE token = :token";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':token', $token, PDO::PARAM_STR);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
         if (!$user) {
             return [
                 CODE => 400,
@@ -125,29 +125,42 @@ function createAd(array $data): array
                 ]
             ];
         }
+
         $user_id = $user['id'];
 
-
-        $sql = "INSERT INTO ads(user_id, title, description, amount, currency) VALUES (:user_id, :title, :description, :amount, :currency)";
+        $sql = "INSERT INTO evenement(nom, date, description) 
+                VALUES (:nom, :date, :description)";
         $stmt = $db->prepare($sql);
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+        $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
+        $stmt->bindParam(':date', $date, PDO::PARAM_STR);
         $stmt->bindParam(':description', $description, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
-        $stmt->bindParam(':currency', $currency, PDO::PARAM_STR);
         $stmt->execute();
 
-        return [CODE => 201, ID_AD => intval($db->lastInsertId())];
+        $event_id = intval($db->lastInsertId());
+
+        $sql = "INSERT INTO evenement_utilisateurs(utilisateurs_id, evenements_id)
+                VALUES (:user_id, :event_id)";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            CODE => 201,
+            ID_AD => $event_id
+        ];
 
     } catch (\Throwable $th) {
         return [
             CODE => 500,
             ERRORS => [
-                [FIELD => SERVER, MESSAGE => 'server.error']
+               // MESSAGE => 'server.error',
+                $th->getMessage()
             ]
         ];
     }
 }
+
 function getAllAds(string $token): array
 {
     $db = getDb();
