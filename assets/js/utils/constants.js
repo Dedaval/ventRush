@@ -47,7 +47,7 @@ export const NAVIGATION = [
     { name: 'Créer un compte', href: 'inscription.html', needLogin: false, id: "btnSignIn" },
     { name: 'Se connecter', href: 'login.html', needLogin: false, id: "btnLogin" },
     { name: 'Se déconnecter', href: null, needLogin: true, onclick: logout, id: "btnLogout" },
-    { name: 'Voir les événements', href: 'ads.html', needLogin: false, accessAnywhere: true, id: "btnAd" },
+    { name: 'Voir les événements', href: 'evenements.html', needLogin: false, accessAnywhere: true, id: "btnAd" },
     { name: 'Créer un événements', href: 'creerEvenement.html', needLogin: true, id: "btnCreateAd" },
     
 ];
