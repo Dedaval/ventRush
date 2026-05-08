@@ -1,7 +1,7 @@
 "use strict";
 
 import { checkFields, displayMessageErrorApi, getAd, resetMessage, sendData, toJson } from "./utils/function.js";
-import { DATE, DESCRIPTION, PRICE, SERVICE_EVENEMENT, TITLE, TOKEN } from "./utils/constants.js";
+import { DATE, DESCRIPTION, NB_MAX_PARTIPANT, PRICE, SERVICE_EVENEMENT, TITLE, TOKEN } from "./utils/constants.js";
 
 const btnSubmit = document.querySelector('#submit');
 const params = new URLSearchParams(window.location.search);
@@ -31,21 +31,25 @@ btnSubmit?.addEventListener("click", async (e) => {
     const nom = document.querySelector('#evenement-nom').value.trim() || null;;
     const description = document.querySelector('#evenement-description').value.trim() || null;
     const date = document.querySelector('#evenement-date').value.trim() || null;
+    const nbMaxParticipant = document.querySelector('#evenement-nbMaxParticipant').value.trim() || null;
 
     const nomError = document.querySelector('#error-evenement-nom');
     const descriptionError = document.querySelector('#error-evenement-description');
     const dateError = document.querySelector('#error-evenement-date');
+    const nbMaxParticipantError = document.querySelector('#error-evenement-nbMaxParticipant');
 
     const fields = {
         [TITLE]: nom,
         [DESCRIPTION]: description,
         [DATE]: date,
+        [NB_MAX_PARTIPANT]: nbMaxParticipant,
     };
 
     const fieldsError = {
         [TITLE]: nomError,
         [DESCRIPTION]: descriptionError,
         [DATE]: dateError,
+        [NB_MAX_PARTIPANT]: nbMaxParticipantError,
     };
 
     resetMessage(fieldsError);
@@ -56,6 +60,7 @@ btnSubmit?.addEventListener("click", async (e) => {
         [TITLE]: fields[TITLE],
         [DESCRIPTION]: fields[DESCRIPTION],
         [DATE]: fields[DATE],
+        [NB_MAX_PARTIPANT]: fields[NB_MAX_PARTIPANT],
 
     };
     let result;

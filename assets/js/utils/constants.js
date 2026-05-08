@@ -12,6 +12,7 @@ export const PRICE = 'price';
 export const AMOUNT = 'amount';
 export const CURRENCY = 'currency';
 export const DATE = 'date';
+export const NB_MAX_PARTIPANT = 'nbMaxParticipant';
 //#endregion
 
 //#region state
