@@ -167,7 +167,6 @@ function getAllAds(string $token): array
 {
     $db = getDb();
 
-    // Vérification du token
     $stmt = $db->prepare("SELECT id FROM utilisateurs WHERE token = :token");
     $stmt->bindParam(':token', $token, PDO::PARAM_STR);
     $stmt->execute();
@@ -184,7 +183,6 @@ function getAllAds(string $token): array
 
     $currentUserId = (int) $currentUser['id'];
 
-    // Récupération des événements
     $sql = "SELECT id, nom, date, description, nbMaxUtilisateurs FROM evenement";
     $stmt = $db->prepare($sql);
     $stmt->execute();
@@ -194,7 +192,6 @@ function getAllAds(string $token): array
 
     foreach ($events as $event) {
 
-        // Vérifier si l'utilisateur participe à cet événement
         $stmtCheck = $db->prepare("
             SELECT 1 FROM evenement_utilisateurs 
             WHERE utilisateurs_id = :uid AND evenements_id = :eid
@@ -365,4 +362,24 @@ function deleteAd(string $token, int $adId): array
         } catch (\Throwable $th) {
             return [CODE => 500, ERRORS => [[FIELD => SERVER, MESSAGE => 'server.error']]];
         }
+    }
+
+    function listParticipant(int $evenementId) {
+        $db = getDb();
+
+        $stmt = $db->prepare("SELECT utilisateurs_id FROM evenement_utilisateurs WHERE evenements_id = :evenementId");
+        $stmt->bindParam(':evenementId', $evenementId, PDO::PARAM_INT);
+        $stmt->execute();
+        $userId = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $users = [];
+
+        foreach ($userId as $id) {
+            $stmt = $db->prepare("SELECT nom, prenom FROM utilisateurs WHERE id = :id");
+            $stmt->bindParam(':id', $email, PDO::PARAM_INT);
+            $stmt->execute();
+            $users[] = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        
+        return $users;
     }

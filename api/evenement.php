@@ -57,6 +57,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     sendResultDb($dbResult, 200, null);
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET'){
+    $adId = filter_input(INPUT_GET, 'idAd', FILTER_SANITIZE_NUMBER_INT);
+
+    $errors = [];
+    if (!$adId) {
+        $errors[] = [
+            CODE => 400,
+            ERRORS => [
+                [FIELD => PARAMETER, MESSAGE => "invalid"]
+            ]
+        ];
+    }
+
+    $dbResult = listParticipant($adId);
+    sendResultDb($dbResult, 200, null);
+
+}
 
 
 
