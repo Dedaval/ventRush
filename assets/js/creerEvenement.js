@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (id === null)
         return;
-    titre.textContent = "Modifier une annonce";
+    titre.textContent = "Modifier un evenement";
     btnSubmit.textContent = "Modifier";
 
     const ad = await getAd(id);

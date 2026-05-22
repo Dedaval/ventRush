@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET'){
-    $adId = filter_input(INPUT_GET, 'idAd', FILTER_SANITIZE_NUMBER_INT);
+    $adId = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
     $errors = [];
     if (!$adId) {

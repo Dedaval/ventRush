@@ -79,7 +79,7 @@ function createDisplayAdCard(ad) {
         </svg>
     `;
     editBtn.addEventListener('click', () => {
-        window.location.href = `../views/create_ad.html?id=${idAd}`;
+        window.location.href = `./creerEvenement.html?id=${idAd}`;
     });
 
     // Delete button
