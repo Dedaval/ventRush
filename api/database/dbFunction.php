@@ -121,13 +121,11 @@ function createAd(array $data): array
         if (!$user) {
             return [
                 CODE => 400,
-                ERRORS => [
-                    MESSAGE => 'invalid.token'
-                ]
+                ERRORS => [MESSAGE => 'invalid.token']
             ];
         }
 
-        $user_id = $user['id'];
+        $user_id = (int) $user['id'];
 
         $sql = "INSERT INTO evenement(nom, date, description, nbMaxUtilisateurs) 
                 VALUES (:nom, :date, :description, :nbMaxUtilisateurs)";
@@ -135,10 +133,10 @@ function createAd(array $data): array
         $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
         $stmt->bindParam(':date', $date, PDO::PARAM_STR);
         $stmt->bindParam(':description', $description, PDO::PARAM_STR);
-        $stmt->bindParam(':nbMaxUtilisateurs', $nbMaxUtilisateurs, PDO::PARAM_STR);
+        $stmt->bindParam(':nbMaxUtilisateurs', $nbMaxUtilisateurs, PDO::PARAM_INT);
         $stmt->execute();
 
-        $event_id = intval($db->lastInsertId());
+        $event_id = (int) $db->lastInsertId();
 
         $sql = "INSERT INTO evenement_utilisateurs(utilisateurs_id, evenements_id)
                 VALUES (:user_id, :event_id)";
@@ -155,10 +153,7 @@ function createAd(array $data): array
     } catch (\Throwable $th) {
         return [
             CODE => 500,
-            ERRORS => [
-               // MESSAGE => 'server.error',
-                $th->getMessage()
-            ]
+            ERRORS => [MESSAGE => 'server.error']
         ];
     }
 }
@@ -175,9 +170,7 @@ function getAllAds(string $token): array
     if (!$currentUser) {
         return [
             CODE => 400,
-            ERRORS => [
-                MESSAGE => 'invalid.token'
-            ]
+            ERRORS => [MESSAGE => 'invalid.token']
         ];
     }
 
@@ -191,25 +184,25 @@ function getAllAds(string $token): array
     $result = [];
 
     foreach ($events as $event) {
+        $eventId = (int) $event['id'];
 
         $stmtCheck = $db->prepare("
             SELECT 1 FROM evenement_utilisateurs 
             WHERE utilisateurs_id = :uid AND evenements_id = :eid
         ");
         $stmtCheck->bindParam(':uid', $currentUserId, PDO::PARAM_INT);
-        $stmtCheck->bindParam(':eid', $event['id'], PDO::PARAM_INT);
+        $stmtCheck->bindParam(':eid', $eventId, PDO::PARAM_INT);
         $stmtCheck->execute();
-
         $isParticipant = $stmtCheck->fetch() ? true : false;
 
         $result[] = [
-            ID_AD => (int) $event['id'],
-            EDITABLE => false,
+            ID_AD       => $eventId,
+            EDITABLE    => $isParticipant,
             PARTICIPANT => $isParticipant,
-            TITLE => $event['nom'],
-            DATE => $event['date'],
+            TITLE       => $event['nom'],
+            DATE        => $event['date'],
             DESCRIPTION => $event['description'],
-            MAX_USERS => (int) $event['nbMaxUtilisateurs']
+            MAX_USERS   => (int) $event['nbMaxUtilisateurs']
         ];
     }
 
@@ -233,33 +226,30 @@ function updateAd(int $adId, array $data): array
 
     $currentUserId = (int) $currentUser['id'];
 
-    $sql = "SELECT user_id FROM ads WHERE id = :idAd";
+    $sql = "SELECT e.id FROM evenement e
+            INNER JOIN evenement_utilisateurs eu ON eu.evenements_id = e.id
+            WHERE e.id = :idAd AND eu.utilisateurs_id = :userId";
     $stmt = $db->prepare($sql);
     $stmt->bindParam(':idAd', $adId, PDO::PARAM_INT);
+    $stmt->bindParam(':userId', $currentUserId, PDO::PARAM_INT);
     $stmt->execute();
-    $ad = $stmt->fetch(PDO::FETCH_ASSOC);
+    $event = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$ad)
+    if (!$event)
         return [
             CODE => 400,
             ERRORS => [[FIELD => ID_AD, MESSAGE => 'not.found']]
         ];
 
-    if ((int) $ad['user_id'] !== $currentUserId)
-        return [
-            CODE => 400,
-            ERRORS => [[FIELD => ID_AD, MESSAGE => 'not.editable']]
-        ];
-
-    $sql = "UPDATE ads 
-            SET title = :title, description = :description, amount = :amount, currency = :currency
+    $sql = "UPDATE evenement 
+            SET nom = :nom, date = :date, description = :description, nbMaxUtilisateurs = :nbMaxUtilisateurs
             WHERE id = :idAd";
     try {
         $stmt = $db->prepare($sql);
-        $stmt->bindParam(':title', $data['title'], PDO::PARAM_STR);
+        $stmt->bindParam(':nom', $data['title'], PDO::PARAM_STR);
+        $stmt->bindParam(':date', $data['date'], PDO::PARAM_STR);
         $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $data['price']['amount'], PDO::PARAM_INT);
-        $stmt->bindParam(':currency', $data['price']['currency'], PDO::PARAM_STR);
+        $stmt->bindParam(':nbMaxUtilisateurs', $data['nbMaxUtilisateurs'], PDO::PARAM_INT);
         $stmt->bindParam(':idAd', $adId, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -268,6 +258,7 @@ function updateAd(int $adId, array $data): array
         return [CODE => 500, ERRORS => [[FIELD => SERVER, MESSAGE => 'server.error']]];
     }
 }
+
 function deleteAd(string $token, int $adId): array
 {
     $db = getDb();
@@ -364,7 +355,8 @@ function deleteAd(string $token, int $adId): array
         }
     }
 
-    function listParticipant(int $evenementId) {
+
+        function listParticipant(int $evenementId) {
         $db = getDb();
 
         $stmt = $db->prepare("SELECT utilisateurs_id FROM evenement_utilisateurs WHERE evenements_id = :evenementId");
