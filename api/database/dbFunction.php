@@ -1,4 +1,4 @@
-    <?php
+<?php
 require_once 'dbUtil.php';
 require_once 'utils.php';
 function createUserDb(array $data): array
@@ -196,13 +196,13 @@ function getAllAds(string $token): array
         $isParticipant = $stmtCheck->fetch() ? true : false;
 
         $result[] = [
-            ID_AD       => $eventId,
-            EDITABLE    => $isParticipant,
+            ID_AD => $eventId,
+            EDITABLE => $isParticipant,
             PARTICIPANT => $isParticipant,
-            TITLE       => $event['nom'],
-            DATE        => $event['date'],
+            TITLE => $event['nom'],
+            DATE => $event['date'],
             DESCRIPTION => $event['description'],
-            MAX_USERS   => (int) $event['nbMaxUtilisateurs']
+            MAX_USERS => (int) $event['nbMaxUtilisateurs']
         ];
     }
 
@@ -305,73 +305,97 @@ function deleteAd(string $token, int $adId): array
         return [CODE => 500, ERRORS => [[FIELD => SERVER, MESSAGE => 'server.error']]];
     }
 }
-    function inscrireEvenement(string $token, int $evenementId): array
-    {
-        $db = getDb();
-
-        $stmt = $db->prepare("SELECT id FROM utilisateurs WHERE token = :token");
-        $stmt->bindParam(':token', $token, PDO::PARAM_STR);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$user) {
-            return [CODE => 401, ERRORS => [[FIELD => TOKEN, MESSAGE => 'token.invalid']]];
-        }
-
-        $userId = (int) $user['id'];
-
-        $stmt = $db->prepare("SELECT id FROM evenement WHERE id = :id");
-        $stmt->bindParam(':id', $evenementId, PDO::PARAM_INT);
-        $stmt->execute();
-        $event = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$event) {
-            return [CODE => 404, ERRORS => [[FIELD => 'evenements_id', MESSAGE => 'not.found']]];
-        }
-
-        $stmt = $db->prepare(
-            "SELECT * FROM evenement_utilisateurs 
+function inscrireEvenement(string $token, int $evenementId): array
+{
+    $db = getDb();
+ 
+    $stmt = $db->prepare("SELECT id FROM utilisateurs WHERE token = :token");
+    $stmt->bindParam(':token', $token, PDO::PARAM_STR);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+    if (!$user) {
+        return [CODE => 401, ERRORS => [[FIELD => TOKEN, MESSAGE => 'token.invalid']]];
+    }
+ 
+    $userId = (int) $user['id'];
+ 
+    $stmt = $db->prepare("SELECT id, nbMaxUtilisateurs FROM evenement WHERE id = :id");
+    $stmt->bindParam(':id', $evenementId, PDO::PARAM_INT);
+    $stmt->execute();
+    $event = $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+    if (!$event) {
+        return [CODE => 404, ERRORS => [[FIELD => 'evenements_id', MESSAGE => 'not.found']]];
+    }
+ 
+    $stmt = $db->prepare(
+        "SELECT 1 FROM evenement_utilisateurs 
          WHERE utilisateurs_id = :uid AND evenements_id = :eid"
+    );
+    $stmt->bindParam(':uid', $userId, PDO::PARAM_INT);
+    $stmt->bindParam(':eid', $evenementId, PDO::PARAM_INT);
+    $stmt->execute();
+ 
+    if ($stmt->fetch()) {
+        return [CODE => 400, ERRORS => [[FIELD => 'evenements_id', MESSAGE => 'already.registered']]];
+    }
+ 
+    if ($event['nbMaxUtilisateurs'] !== null) {
+        $stmtCount = $db->prepare(
+            "SELECT COUNT(*) AS nb FROM evenement_utilisateurs WHERE evenements_id = :eid"
+        );
+        $stmtCount->bindParam(':eid', $evenementId, PDO::PARAM_INT);
+        $stmtCount->execute();
+        $count = (int) $stmtCount->fetchColumn();
+ 
+        if ($count >= (int) $event['nbMaxUtilisateurs']) {
+            return [CODE => 400, ERRORS => [[FIELD => 'evenements_id', MESSAGE => 'event.full']]];
+        }
+    }
+ 
+    try {
+        $stmt = $db->prepare(
+            "INSERT INTO evenement_utilisateurs(utilisateurs_id, evenements_id) 
+             VALUES (:uid, :eid)"
         );
         $stmt->bindParam(':uid', $userId, PDO::PARAM_INT);
         $stmt->bindParam(':eid', $evenementId, PDO::PARAM_INT);
         $stmt->execute();
+ 
+        return [CODE => 201];
+    } catch (\Throwable $th) {
+        return [CODE => 500, ERRORS => [[FIELD => SERVER, MESSAGE => 'server.error']]];
+    }
+}
+function listParticipant(int $evenementId, string $token): array
+{
+    $db = getDb();
 
-        if ($stmt->fetch()) {
-            return [CODE => 400, ERRORS => [[FIELD => 'evenements_id', MESSAGE => 'already.registered']]];
-        }
-
-        try {
-            $stmt = $db->prepare(
-                "INSERT INTO evenement_utilisateurs(utilisateurs_id, evenements_id) 
-             VALUES (:uid, :eid)"
-            );
-            $stmt->bindParam(':uid', $userId, PDO::PARAM_INT);
-            $stmt->bindParam(':eid', $evenementId, PDO::PARAM_INT);
-            $stmt->execute();
-
-            return [CODE => 201];
-        } catch (\Throwable $th) {
-            return [CODE => 500, ERRORS => [[FIELD => SERVER, MESSAGE => 'server.error']]];
-        }
+    $stmt = $db->prepare("SELECT id FROM utilisateurs WHERE token = :token");
+    $stmt->bindParam(':token', $token, PDO::PARAM_STR);
+    $stmt->execute();
+    if (!$stmt->fetch()) {
+        return [CODE => 401, ERRORS => [[FIELD => TOKEN, MESSAGE => 'token.invalid']]];
+    }
+ 
+    $stmt = $db->prepare("SELECT id FROM evenement WHERE id = :id");
+    $stmt->bindParam(':id', $evenementId, PDO::PARAM_INT);
+    $stmt->execute();
+    if (!$stmt->fetch()) {
+        return [CODE => 404, ERRORS => [[FIELD => 'evenements_id', MESSAGE => 'not.found']]];
     }
 
-
-        function listParticipant(int $evenementId) {
-        $db = getDb();
-
-        $stmt = $db->prepare("SELECT utilisateurs_id FROM evenement_utilisateurs WHERE evenements_id = :evenementId");
-        $stmt->bindParam(':evenementId', $evenementId, PDO::PARAM_INT);
-        $stmt->execute();
-        $userId = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $users = [];
-
-        foreach ($userId as $id) {
-            $stmt = $db->prepare("SELECT nom, prenom FROM utilisateurs WHERE id = :id");
-            $stmt->bindParam(':id', $email, PDO::PARAM_INT);
-            $stmt->execute();
-            $users[] = $stmt->fetch(PDO::FETCH_ASSOC);
-        }
-        
-        return $users;
-    }
+    $stmt = $db->prepare(
+        "SELECT u.nom, u.prenom
+         FROM utilisateurs u
+         INNER JOIN evenement_utilisateurs eu ON eu.utilisateurs_id = u.id
+         WHERE eu.evenements_id = :evenementId
+         ORDER BY u.nom, u.prenom"
+    );
+    $stmt->bindParam(':evenementId', $evenementId, PDO::PARAM_INT);
+    $stmt->execute();
+    $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+ 
+    return [CODE => 200, 'participants' => $participants];
+}
