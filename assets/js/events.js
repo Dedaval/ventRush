@@ -126,7 +126,7 @@ async function displayAds() {
 
     if (!Array.isArray(allAds) || allAds.length === 0) {
         messageError.style.display = "block";
-        messageError.textContent = 'Aucune annonce disponible';
+        messageError.textContent = 'Aucun evenement disponible';
         return;
     }
 
