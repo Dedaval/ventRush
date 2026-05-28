@@ -109,7 +109,7 @@ export async function sendData(service, method, data = null, param = null) {
         }
         let url = `${SERVICE_URL}${service}`;
         if (param !== null) {
-            url = `${url}/${param}`;
+            url = `${url}?id=${param}`;
         }
         const response = await fetch(url, properties);
         return await (response);

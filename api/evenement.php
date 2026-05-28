@@ -58,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET'){
+    
     $adId = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
     $errors = [];
@@ -69,8 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET'){
             ]
         ];
     }
-
-    $dbResult = listParticipant($adId);
+    
+    $dbResult = getAd($adId);
+    
+    echo json_encode($dbResult);
+    http_response_code(200);
+    exit;
     sendResultDb($dbResult, 200, null);
 
 }

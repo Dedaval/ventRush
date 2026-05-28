@@ -399,3 +399,18 @@ function listParticipant(int $evenementId, string $token): array
  
     return [CODE => 200, 'participants' => $participants];
 }
+
+ function getAd(int $id) {
+    try{
+        $db = getDb();
+        $sql = "SELECT id, nom, date, description, nbMaxUtilisateurs FROM evenement WHERE id = :id";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();        
+        $adId = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $adId;
+    }
+    catch (\Throwable $th) {
+        return [CODE => 500, ERRORS => [[FIELD => SERVER, MESSAGE => 'server.error']]];
+    }
+    }

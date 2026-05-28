@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const description = document.querySelector('#evenement-description');
     const date = document.querySelector('#evenement-date');
     const titre = document.querySelector('.titre');
+    const nbMaxParticipant = document.querySelector('#evenement-nbMaxParticipant');
 
 
     if (id === null)
@@ -20,9 +21,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnSubmit.textContent = "Modifier";
 
     const ad = await getAd(id);
-    nom.value = ad.titre;
+    console.log(ad);
+    nom.value = ad.nom;
     description.value = ad.description;
-    date.value = ad.price.amount;
+    date.value = ad.date;
+    nbMaxParticipant.value = ad.nbMaxUtilisateurs;
 });
 
 btnSubmit?.addEventListener("click", async (e) => {
@@ -66,13 +69,14 @@ btnSubmit?.addEventListener("click", async (e) => {
     let result;
     if (id !== null){
         result = await sendData(SERVICE_EVENEMENT, "PUT", data, id);
+        console.log(result);
     }
     else 
         console.log(data);
         result = await sendData(SERVICE_EVENEMENT, "POST", data);
     const json = await toJson(result);
     if (result.ok) {
-        window.location.href = 'index.html';
+        //window.location.href = 'index.html';
     }
     if (Array.isArray(json)) {
         for (const element of json) {
